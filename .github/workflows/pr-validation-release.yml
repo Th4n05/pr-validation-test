@@ -3,7 +3,7 @@ name: Validate Pull Request Release
 on:
   pull_request:
     types: [opened, edited]
-    
+
     branches: [ master ]
 
 
@@ -20,8 +20,7 @@ jobs:
         id: validate
         run: |
           if [[ "${{ github.event.pull_request.title }}" =~ upgrade-version-type[[:space:]]*=[[:space:]]*(major|minor|patch) ]]; then
-            echo "Title is valid"
+            exit 0
           else
-            echo "Title does not contain 'upgrade-version-type = [major, minor, path]'"
             exit 1
           fi
