@@ -35,8 +35,8 @@ jobs:
 
       - name: Set up Git user
         run: |
-          git config --global user.name 'github-actions'
-          git config --global user.email 'github-actions@github.com'
+          git config --global user.name 'anis-app[bot]'
+          git config --global user.email '121050231+anis-app[bot]@users.noreply.github.com'
 
       - name: Extract Version Type
         id: extract_version_type
