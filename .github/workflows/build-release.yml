@@ -97,7 +97,7 @@ jobs:
             ]
           output_file: ./custom.xml
 
-      -name: dump
+      - name: dump
         run: cat $GITHUB_WORKSPACE/custom.xml
 
       - name: release-prepare
