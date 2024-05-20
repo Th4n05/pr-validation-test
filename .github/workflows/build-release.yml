@@ -102,6 +102,9 @@ jobs:
 
       - name: release-prepare
         run: mvn -s $GITHUB_WORKSPACE/custom.xml --batch-mode release:prepare
+        env:
+          GITHUB_ACTOR: anis-app[bot]
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
 
       - name: release-perform
         if: ${{ success() }}
