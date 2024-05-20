@@ -23,27 +23,27 @@ jobs:
         with:
           maven-version: 3.9.5
       - name: prepare setting
-          uses: whelk-io/maven-settings-xml-action@v22
-          with:
-            servers: >
-              [
-                {
-                  "id": "github",
-                  "username": "${GITHUB_ACTOR}",
-                  "password": "${GITHUB_TOKEN}"
+        uses: whelk-io/maven-settings-xml-action@v22
+        with:
+          servers: >
+            [
+              {
+                "id": "github",
+                "username": "${GITHUB_ACTOR}",
+                "password": "${GITHUB_TOKEN}"
+              }
+            ]
+          profiles: >
+            [
+              {
+                "id": "github",
+                "properties": {
+                  "github.username": "${GITHUB_ACTOR}",
+                  "github.password": "${GITHUB_TOKEN}"
                 }
-              ]
-            profiles: >
-              [
-                {
-                  "id": "github",
-                  "properties": {
-                    "github.username": "${GITHUB_ACTOR}",
-                    "github.password": "${GITHUB_TOKEN}"
-                  }
-                }
-              ]
-            output_file: ./custom.xml
+              }
+            ]
+          output_file: ./custom.xml
       - name: release-prepare
         run: mvn -s $GITHUB_WORKSPACE/custom.xml --batch-mode release:prepare
 
