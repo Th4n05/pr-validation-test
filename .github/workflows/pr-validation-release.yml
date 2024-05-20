@@ -1,0 +1,23 @@
+name: Validate Pull Request Release
+
+on:
+  pull_request:
+    types: [opened, edited]
+
+jobs:
+  validate-title:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Validate PR Title
+        id: validate
+        run: |
+          if [[ "${{ github.event.pull_request.title }}" =~ upgrade-version-type[[:space:]]*=[[:space:]]*(major|minor|patch) ]]; then
+            echo "Title is valid"
+          else
+            echo "Title does not contain 'upgrade-version-type = [major, minor, path]'"
+            exit 1
+          fi
