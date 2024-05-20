@@ -74,7 +74,7 @@ jobs:
       - name: prepare setting
         uses: whelk-io/maven-settings-xml-action@v22
         env:
-          GITHUB_ACTOR: ghs
+          GITHUB_ACTOR: anis-app[bot]
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         with:
           servers: >
