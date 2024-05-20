@@ -22,10 +22,17 @@ jobs:
         with:
           distribution: 'temurin' # See 'Supported distributions' for available options
           java-version: '21'
+      - uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: ${{ secrets.APP_ID}}
+          private-key: ${{ secrets.PRIVATE_KEY }}
+
       - name: Set up Maven
         uses: stCarolas/setup-maven@v4.5
         with:
           maven-version: 3.9.5
+
       - name: Set up Git user
         run: |
           git config --global user.name 'github-actions'
@@ -66,6 +73,9 @@ jobs:
                   echo "NEXT_SNAPSHOT=$NEXT_SNAPSHOT" >> $GITHUB_ENV
       - name: prepare setting
         uses: whelk-io/maven-settings-xml-action@v22
+        env:
+          GITHUB_ACTOR: ghs
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         with:
           servers: >
             [
