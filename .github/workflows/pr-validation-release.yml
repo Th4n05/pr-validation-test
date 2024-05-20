@@ -3,6 +3,8 @@ name: Validate Pull Request Release
 on:
   pull_request:
     types: [opened, edited]
+    branches: [ master ]
+
 
 jobs:
   validate-title:
