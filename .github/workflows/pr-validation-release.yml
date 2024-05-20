@@ -6,6 +6,7 @@ on:
 
 jobs:
   validate-title:
+    name: pr-release-version
     runs-on: ubuntu-latest
 
     steps:
