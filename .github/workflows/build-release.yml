@@ -4,14 +4,15 @@ on:
   pull_request:
     types:
       - closed
-env:
-  GITHUB_ACTOR: ghs
-  GITHUB_TOKEN: ${{ secrets.PRIVATE_KEY }}
+
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
+    env:
+      GTIHUB_ACTOR: anis-app[bot]
+      GITHUB_TOKEN: ${{ github.token }}
     permissions:
       contents: write
       packages: write
