@@ -65,9 +65,6 @@ jobs:
                   echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
                   echo "NEXT_SNAPSHOT=$NEXT_SNAPSHOT" >> $GITHUB_ENV
 
-      - name: dump
-        run: cat $GITHUB_WORKSPACE/custom.xml
-
       - name: release-prepare
         run: |
           #git credential-cache exit
