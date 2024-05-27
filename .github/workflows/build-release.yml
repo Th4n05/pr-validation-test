@@ -72,27 +72,27 @@ jobs:
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
           echo "NEXT_SNAPSHOT=$NEXT_SNAPSHOT" >> $GITHUB_ENV
       - name: prepare setting
-          uses: whelk-io/maven-settings-xml-action@v22
-          with:
-            servers: >
-              [
-                {
-                  "id": "github",
-                  "username": "anis-app",
-                  "password": "${{ steps.app-token.outputs.token }}"
+        uses: whelk-io/maven-settings-xml-action@v22
+        with:
+          servers: >
+            [
+              {
+                "id": "github",
+                "username": "anis-app",
+                "password": "${{ steps.app-token.outputs.token }}"
+              }
+            ]
+          profiles: >
+            [
+              {
+                "id": "github",
+                "properties": {
+                  "github.username": "anis-app",
+                  "github.password": "${{ steps.app-token.outputs.token }}"
                 }
-              ]
-            profiles: >
-              [
-                {
-                  "id": "github",
-                  "properties": {
-                    "github.username": "anis-app",
-                    "github.password": "${{ steps.app-token.outputs.token }}"
-                  }
-                }
-              ]
-            output_file: ./custom.xml
+              }
+            ]
+          output_file: ./custom.xml
       - name: release-prepare
         run: |
           export GITHUB_TOKEN=${{ steps.app-token.outputs.token }}
