@@ -97,23 +97,23 @@ jobs:
 
       - name: release-prepare
         env:
-          GITHUB_USER: anis-app
+          GITHUB_USER: anis-app[bot]
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
-          echo GITHUB_USER
+          echo $GITHUB_USER
           echo $GITHUB_TOKEN
           mvn -s $GITHUB_WORKSPACE/custom.xml --batch-mode release:prepare
 
       - name: release-perform
         env:
-          GITHUB_USER: anis-app
+          GITHUB_USER: anis-app[bot]
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         if: ${{ success() }}
         run: mvn -s $GITHUB_WORKSPACE/custom.xml --batch-mode release:perform
 
       - name: release-rollback
         env:
-          GITHUB_USER: anis-app
+          GITHUB_USER: anis-app[bot]
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         if: ${{ failure() }}
         run: mvn -s $GITHUB_WORKSPACE/custom.xml -B release:rollback
