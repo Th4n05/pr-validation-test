@@ -80,8 +80,8 @@ jobs:
           export GIT_TRACE=1
           #git config -l
           #git config credential.https://github.com/.helper "! f() { echo username=anis-app; echo password=${{ steps.app-token.outputs.token }}; };f"
-          #unset GITHUB_TOKEN
-          #unset GITHUB_ACTOR
+          unset GITHUB_TOKEN
+          unset GITHUB_ACTOR
           #export GITHUB_TOKEN=${{ steps.app-token.outputs.token }}
           #export GITHUB_ACTOR=anis-app
           echo Actor: $GITHUB_ACTOR  Token : $GITHUB_TOKEN
