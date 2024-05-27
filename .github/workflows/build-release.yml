@@ -96,6 +96,7 @@ jobs:
       - name: release-prepare
         run: |
           git credential-cache exit
+          git config set http.https://github.com/.extraheader=AUTHORIZATION: basic ${{ steps.app-token.outputs.token }}
           echo $GITHUB_USER  $GITHUB_TOKEN
           git config -l
           mvn -s $GITHUB_WORKSPACE/custom.xml --batch-mode release:prepare
