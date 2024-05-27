@@ -69,6 +69,9 @@ jobs:
           echo "NEXT_SNAPSHOT=$NEXT_SNAPSHOT" >> $GITHUB_ENV
 
       - name: release-prepare
+        env:
+          GITHUB_ACTOR=anis-app
+          GITHUB_TOKEN=${{ steps.app-token.outputs.token }}
         run: |
           #git credential-cache exit
           #export CREDENTIALS=$(echo -n "anis-app:${{ steps.app-token.outputs.token }}" | base64)
@@ -76,10 +79,7 @@ jobs:
           export GIT_TRACE=1
           #git config -l
           #git config credential.https://github.com/.helper "! f() { echo username=anis-app; echo password=${{ steps.app-token.outputs.token }}; };f"
-          unset GITHUB_TOKEN
-          export GITHUB_TOKEN=${{ steps.app-token.outputs.token }}
-          export GITHUB_ACTOR=anis-app
-          echo $GITHUB_ACTOR  $GITHUB_TOKEN
+          echo Actor: $GITHUB_ACTOR  Token: $GITHUB_TOKEN
           mvn --batch-mode release:prepare
 
       - name: release-perform
