@@ -85,7 +85,8 @@ jobs:
           #export GITHUB_TOKEN=${{ steps.app-token.outputs.token }}
           #export GITHUB_ACTOR=anis-app
           #echo Actor: $GITHUB_ACTOR  Token : $GITHUB_TOKEN
-          git remote set-url origin https://x-access-token:${{ steps.app-token.outputs.token }}@github.com/Th4n05/pr-validation-test.git
+          git remote set-url origin https://anis-app:${{ steps.app-token.outputs.token }}@github.com/Th4n05/pr-validation-test.git
+          git config -l
           mvn --batch-mode release:prepare
 
       - name: release-perform
