@@ -11,7 +11,7 @@ jobs:
 
     runs-on: ubuntu-latest
     env:
-      GTIHUB_ACTOR: anis-app[bot]
+      GTIHUB_ACTOR: 121050231+anis-app[bot]@users.noreply.github.com
       GITHUB_TOKEN: ${{ github.token }}
     permissions:
       contents: write
@@ -74,9 +74,6 @@ jobs:
                   echo "NEXT_SNAPSHOT=$NEXT_SNAPSHOT" >> $GITHUB_ENV
       - name: prepare setting
         uses: whelk-io/maven-settings-xml-action@v22
-        env:
-          GITHUB_ACTOR: anis-app[bot]
-          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         with:
           servers: >
             [
