@@ -91,12 +91,12 @@ jobs:
 
       - name: release-perform
         run: |
-        export GITHUB_TOKEN=${{ steps.app-token.outputs.token }}
-        export GITHUB_ACTOR=anis-app
-        mvn --batch-mode release:perform
+          export GITHUB_TOKEN=${{ steps.app-token.outputs.token }}
+          export GITHUB_ACTOR=anis-app
+          mvn --batch-mode release:perform
 
       - name: release-rollback
         run: |
-        export GITHUB_TOKEN=${{ steps.app-token.outputs.token }}
-        export GITHUB_ACTOR=anis-app
-        mvn -B release:rollback
+          export GITHUB_TOKEN=${{ steps.app-token.outputs.token }}
+          export GITHUB_ACTOR=anis-app
+          mvn -B release:rollback
