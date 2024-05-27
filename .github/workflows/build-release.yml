@@ -75,16 +75,17 @@ jobs:
       - name: release-prepare
         run: |
           #git credential-cache exit
-          export CREDENTIALS=$(echo -n "anis-app:${{ steps.app-token.outputs.token }}" | base64)
-          git config --global "http.https://github.com/Th4n05/pr-validation-test.extraheader=Authorization: basic $CREDENTIALS"
+          #export CREDENTIALS=$(echo -n "anis-app:${{ steps.app-token.outputs.token }}" | base64)
+          #git config --global "http.https://github.com/Th4n05/pr-validation-test.extraheader=Authorization: basic $CREDENTIALS"
           export GIT_TRACE=1
           #git config -l
           #git config credential.https://github.com/.helper "! f() { echo username=anis-app; echo password=${{ steps.app-token.outputs.token }}; };f"
-          unset GITHUB_TOKEN
-          unset GITHUB_ACTOR
+          #unset GITHUB_TOKEN
+          #unset GITHUB_ACTOR
           #export GITHUB_TOKEN=${{ steps.app-token.outputs.token }}
           #export GITHUB_ACTOR=anis-app
-          echo Actor: $GITHUB_ACTOR  Token : $GITHUB_TOKEN
+          #echo Actor: $GITHUB_ACTOR  Token : $GITHUB_TOKEN
+          git remote set-url origin https://x-access-token:${{ steps.app-token.outputs.token }}@github.com/Th4n05/pr-validation-test.git
           mvn --batch-mode release:prepare
 
       - name: release-perform
