@@ -1,0 +1,27 @@
+name: Validate Pull Request Release
+
+on:
+  pull_request:
+    types: [opened, edited]
+
+    branches: [ master ]
+
+
+jobs:
+  validate-title:
+    name: pr-release-version
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Validate PR Title
+        id: validate
+        run: |
+          if [[ "${{ github.event.pull_request.title }}" =~ \[upgrade-version-type[[:space:]]*=[[:space:]]*(major|minor|patch)\] ]]; then
+            exit 0
+          else
+            exit 1
+          
+          fi
