@@ -71,6 +71,9 @@ jobs:
                   echo "NEXT_SNAPSHOT=$NEXT_SNAPSHOT" >> $GITHUB_ENV
       - name: prepare setting
         uses: whelk-io/maven-settings-xml-action@v22
+        env:
+          GITHUB_USER: anis-app[bot]
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         with:
           servers: >
             [
@@ -97,22 +100,14 @@ jobs:
 
       - name: release-prepare
         env:
-          GITHUB_USER: anis-app[bot]
-          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           echo $GITHUB_USER  $GITHUB_TOKEN
           mvn -s $GITHUB_WORKSPACE/custom.xml --batch-mode release:prepare
 
       - name: release-perform
-        env:
-          GITHUB_USER: anis-app[bot]
-          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         if: ${{ success() }}
         run: mvn -s $GITHUB_WORKSPACE/custom.xml --batch-mode release:perform
 
       - name: release-rollback
-        env:
-          GITHUB_USER: anis-app[bot]
-          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         if: ${{ failure() }}
         run: mvn -s $GITHUB_WORKSPACE/custom.xml -B release:rollback
