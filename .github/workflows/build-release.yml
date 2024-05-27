@@ -82,6 +82,7 @@ jobs:
                 "username": "anis-app[bot]",
                 "password": "${{ steps.app-token.outputs.token }}"
               }
+            
             ]
           profiles: >
             [
