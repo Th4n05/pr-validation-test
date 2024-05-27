@@ -8,6 +8,7 @@ update-secret.sh
 *.releaseBackup
 release.properties
 settings.xml
+
 # Log file
 *.log
 
