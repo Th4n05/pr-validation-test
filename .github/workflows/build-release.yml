@@ -100,7 +100,7 @@ jobs:
           GITHUB_USER: anis-app
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
-          echo $GITHUB_ACTOR
+          echo GITHUB_USER
           echo $GITHUB_TOKEN
           mvn -s $GITHUB_WORKSPACE/custom.xml --batch-mode release:prepare
 
