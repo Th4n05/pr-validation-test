@@ -79,8 +79,8 @@ jobs:
             [
               {
                 "id": "github",
-                "username": "${GITHUB_USER}",
-                "password": "${GITHUB_TOKEN}"
+                "username": "anis-app[bot]",
+                "password": "${{ steps.app-token.outputs.token }}"
               }
             ]
           profiles: >
@@ -88,8 +88,8 @@ jobs:
               {
                 "id": "github",
                 "properties": {
-                  "github.username": "${GITHUB_USER}",
-                  "github.password": "${GITHUB_TOKEN}"
+                  "github.username": "anis-app[bot]",
+                  "github.password": "${{ steps.app-token.outputs.token }}"
                 }
               }
             ]
@@ -99,7 +99,6 @@ jobs:
         run: cat $GITHUB_WORKSPACE/custom.xml
 
       - name: release-prepare
-        env:
         run: |
           echo $GITHUB_USER  $GITHUB_TOKEN
           mvn -s $GITHUB_WORKSPACE/custom.xml --batch-mode release:prepare
