@@ -10,9 +10,6 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    env:
-      GTIHUB_ACTOR: git
-      GITHUB_TOKEN: ${{ github.token }}
     permissions:
       contents: write
       packages: write
@@ -79,7 +76,7 @@ jobs:
             [
               {
                 "id": "github",
-                "username": "${GITHUB_ACTOR}",
+                "username": "${GITHUB_USER}",
                 "password": "${GITHUB_TOKEN}"
               }
             ]
@@ -88,7 +85,7 @@ jobs:
               {
                 "id": "github",
                 "properties": {
-                  "github.username": "${GITHUB_ACTOR}",
+                  "github.username": "${GITHUB_USER}",
                   "github.password": "${GITHUB_TOKEN}"
                 }
               }
@@ -100,7 +97,7 @@ jobs:
 
       - name: release-prepare
         env:
-          GITHUB_ACTOR: anis-app
+          GITHUB_USER: anis-app
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           echo $GITHUB_ACTOR
@@ -109,14 +106,14 @@ jobs:
 
       - name: release-perform
         env:
-          GITHUB_ACTOR: anis-app
+          GITHUB_USER: anis-app
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         if: ${{ success() }}
         run: mvn -s $GITHUB_WORKSPACE/custom.xml --batch-mode release:perform
 
       - name: release-rollback
         env:
-          GITHUB_ACTOR: anis-app
+          GITHUB_USER: anis-app
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         if: ${{ failure() }}
         run: mvn -s $GITHUB_WORKSPACE/custom.xml -B release:rollback
