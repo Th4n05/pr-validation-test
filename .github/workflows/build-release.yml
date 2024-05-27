@@ -35,10 +35,10 @@ jobs:
           git config --global user.email '121050231+anis-app[bot]@users.noreply.github.com'
 
       - name: Extract Version Type
-        id: extract_version_typei
+        id: extract_version_type
         run: |
           PR_TITLE="${{ github.event.pull_request.title }}"
-          f [[ "$PR_TITLE" =~ upgrade-version-type[[:space:]]*=[[:space:]]*(major|minor|patch) ]]; then
+          if [[ "$PR_TITLE" =~ upgrade-version-type[[:space:]]*=[[:space:]]*(major|minor|patch) ]]; then
             VERSION_TYPE=${BASH_REMATCH[1]}
             echo "VERSION_TYPE=$VERSION_TYPE" >> $GITHUB_ENV
           fi
