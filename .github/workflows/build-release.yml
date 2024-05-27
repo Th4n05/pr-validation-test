@@ -95,9 +95,10 @@ jobs:
 
       - name: release-prepare
         run: |
-          git credential-cache exit
-          export CREDENTIALS=$(echo -n "anis-app:${{ steps.app-token.outputs.token }}" | base64)
-          git config --global "http.https://github.com/.extraheader=AUTHORIZATION: basic $CREDENTIALS"
+          #git credential-cache exit
+          #export CREDENTIALS=$(echo -n "anis-app:${{ steps.app-token.outputs.token }}" | base64)
+          #git config --global "http.https://github.com/.extraheader=AUTHORIZATION: basic $CREDENTIALS"
+          git config credential.https://github.com/.helper "! f() { echo username=anis-app; echo password=${{ steps.app-token.outputs.token }}; };f"
           echo $GITHUB_USER  $GITHUB_TOKEN
           git config -l
           mvn -s $GITHUB_WORKSPACE/custom.xml --batch-mode release:prepare
