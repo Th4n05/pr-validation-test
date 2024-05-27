@@ -100,20 +100,23 @@ jobs:
 
       - name: release-prepare
         env:
-          GITHUB_ACTOR: anis-app[bot]
+          GITHUB_ACTOR: anis-app
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
-        run: mvn -s $GITHUB_WORKSPACE/custom.xml --batch-mode release:prepare
+        run: |
+          echo $GITHUB_ACTOR
+          echo $GITHUB_TOKEN
+          mvn -s $GITHUB_WORKSPACE/custom.xml --batch-mode release:prepare
 
       - name: release-perform
         env:
-          GITHUB_ACTOR: anis-app[bot]
+          GITHUB_ACTOR: anis-app
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         if: ${{ success() }}
         run: mvn -s $GITHUB_WORKSPACE/custom.xml --batch-mode release:perform
 
       - name: release-rollback
         env:
-          GITHUB_ACTOR: anis-app[bot]
+          GITHUB_ACTOR: anis-app
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         if: ${{ failure() }}
         run: mvn -s $GITHUB_WORKSPACE/custom.xml -B release:rollback
