@@ -79,7 +79,7 @@ jobs:
             [
               {
                 "id": "github",
-                "username": "anis-app[bot]",
+                "username": "anis-app",
                 "password": "${{ steps.app-token.outputs.token }}"
               }
             ]
@@ -88,7 +88,7 @@ jobs:
               {
                 "id": "github",
                 "properties": {
-                  "github.username": "anis-app[bot]",
+                  "github.username": "anis-app",
                   "github.password": "${{ steps.app-token.outputs.token }}"
                 }
               }
