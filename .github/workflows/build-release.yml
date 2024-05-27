@@ -70,8 +70,8 @@ jobs:
 
       - name: release-prepare
         env:
-          GITHUB_ACTOR=anis-app
-          GITHUB_TOKEN=${{ steps.app-token.outputs.token }}
+          GITHUB_ACTOR: anis-app
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           #git credential-cache exit
           #export CREDENTIALS=$(echo -n "anis-app:${{ steps.app-token.outputs.token }}" | base64)
