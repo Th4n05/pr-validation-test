@@ -8,12 +8,7 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      packages: write
-
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -100,7 +95,9 @@ jobs:
 
       - name: release-prepare
         run: |
+          git credential-cache exit
           echo $GITHUB_USER  $GITHUB_TOKEN
+          git config -l
           mvn -s $GITHUB_WORKSPACE/custom.xml --batch-mode release:prepare
 
       - name: release-perform
