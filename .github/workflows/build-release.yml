@@ -11,7 +11,7 @@ jobs:
 
     runs-on: ubuntu-latest
     env:
-      GTIHUB_ACTOR: 121050231+anis-app[bot]@users.noreply.github.com
+      GTIHUB_ACTOR: git
       GITHUB_TOKEN: ${{ github.token }}
     permissions:
       contents: write
@@ -99,16 +99,21 @@ jobs:
         run: cat $GITHUB_WORKSPACE/custom.xml
 
       - name: release-prepare
+        env:
+          GITHUB_ACTOR: anis-app[bot]
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         run: mvn -s $GITHUB_WORKSPACE/custom.xml --batch-mode release:prepare
 
       - name: release-perform
+        env:
+          GITHUB_ACTOR: anis-app[bot]
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         if: ${{ success() }}
         run: mvn -s $GITHUB_WORKSPACE/custom.xml --batch-mode release:perform
 
-      - name: Build and deploy to github packages
-        if: ${{ success() }}
-        run: mvn -s $GITHUB_WORKSPACE/custom.xml -B package
-
       - name: release-rollback
+        env:
+          GITHUB_ACTOR: anis-app[bot]
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         if: ${{ failure() }}
         run: mvn -s $GITHUB_WORKSPACE/custom.xml -B release:rollback
