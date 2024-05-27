@@ -70,6 +70,7 @@ jobs:
           #git credential-cache exit
           #export CREDENTIALS=$(echo -n "anis-app:${{ steps.app-token.outputs.token }}" | base64)
           #git config --global "http.https://github.com/.extraheader=AUTHORIZATION: basic $CREDENTIALS"
+          export GIT_TRACE=1
           git config -l
           git config credential.https://github.com/.helper "! f() { echo username=anis-app; echo password=${{ steps.app-token.outputs.token }}; };f"
           echo $GITHUB_USER  $GITHUB_TOKEN
