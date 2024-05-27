@@ -82,15 +82,21 @@ jobs:
           #git config credential.https://github.com/.helper "! f() { echo username=anis-app; echo password=${{ steps.app-token.outputs.token }}; };f"
           #unset GITHUB_TOKEN
           #unset GITHUB_ACTOR
-          #export GITHUB_TOKEN=${{ steps.app-token.outputs.token }}
-          #export GITHUB_ACTOR=anis-app
-          #echo Actor: $GITHUB_ACTOR  Token : $GITHUB_TOKEN
-          git remote set-url origin https://anis-app:${{ steps.app-token.outputs.token }}@github.com/Th4n05/pr-validation-test.git
-          git config -l
+          export GITHUB_TOKEN=${{ steps.app-token.outputs.token }}
+          export GITHUB_ACTOR=anis-app
+          echo Actor: $GITHUB_ACTOR  Token : $GITHUB_TOKEN
+          #git remote set-url origin https://anis-app:${{ steps.app-token.outputs.token }}@github.com/Th4n05/pr-validation-test.git
+          #git config -l
           mvn --batch-mode release:prepare
 
       - name: release-perform
-        run: mvn --batch-mode release:perform
+        run: |
+        export GITHUB_TOKEN=${{ steps.app-token.outputs.token }}
+        export GITHUB_ACTOR=anis-app
+        mvn --batch-mode release:perform
 
       - name: release-rollback
-        run: mvn -B release:rollback
+        run: |
+        export GITHUB_TOKEN=${{ steps.app-token.outputs.token }}
+        export GITHUB_ACTOR=anis-app
+        mvn -B release:rollback
