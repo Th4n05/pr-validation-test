@@ -35,7 +35,7 @@ jobs:
 
       - name: Set up Git user
         run: |
-          git config --global user.name 'anis-app'
+          git config --global user.name 'anis-app[bot]'
           git config --global user.email '121050231+anis-app[bot]@users.noreply.github.com'
 
       - name: Extract Version Type
@@ -71,32 +71,42 @@ jobs:
           esac
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
           echo "NEXT_SNAPSHOT=$NEXT_SNAPSHOT" >> $GITHUB_ENV
-
+      - name: prepare setting
+          uses: whelk-io/maven-settings-xml-action@v22
+          with:
+            servers: >
+              [
+                {
+                  "id": "github",
+                  "username": "anis-app",
+                  "password": "${{ steps.app-token.outputs.token }}"
+                }
+              ]
+            profiles: >
+              [
+                {
+                  "id": "github",
+                  "properties": {
+                    "github.username": "anis-app",
+                    "github.password": "${{ steps.app-token.outputs.token }}"
+                  }
+                }
+              ]
+            output_file: ./custom.xml
       - name: release-prepare
         run: |
-          #git credential-cache exit
-          #export CREDENTIALS=$(echo -n "anis-app:${{ steps.app-token.outputs.token }}" | base64)
-          #git config --global "http.https://github.com/Th4n05/pr-validation-test.extraheader=Authorization: basic $CREDENTIALS"
-          export GIT_TRACE=1
-          #git config -l
-          #git config credential.https://github.com/.helper "! f() { echo username=anis-app; echo password=${{ steps.app-token.outputs.token }}; };f"
-          #unset GITHUB_TOKEN
-          #unset GITHUB_ACTOR
           export GITHUB_TOKEN=${{ steps.app-token.outputs.token }}
           export GITHUB_ACTOR=anis-app
-          echo Actor: $GITHUB_ACTOR  Token : $GITHUB_TOKEN
-          #git remote set-url origin https://anis-app:${{ steps.app-token.outputs.token }}@github.com/Th4n05/pr-validation-test.git
-          #git config -l
-          mvn --batch-mode release:prepare
+          mvn --batch-mode -s ./custom.xml release:prepare
 
       - name: release-perform
         run: |
           export GITHUB_TOKEN=${{ steps.app-token.outputs.token }}
           export GITHUB_ACTOR=anis-app
-          mvn --batch-mode release:perform
+          mvn --batch-mode  -s ./custom.xml release:perform
 
       - name: release-rollback
         run: |
           export GITHUB_TOKEN=${{ steps.app-token.outputs.token }}
           export GITHUB_ACTOR=anis-app
-          mvn -B release:rollback
+          mvn -B -s ./custom.xml release:rollback
