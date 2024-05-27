@@ -78,8 +78,8 @@ jobs:
             [
               {
                 "id": "github",
-                "username": "anis-app",
-                "password": "${{ steps.app-token.outputs.token }}"
+                "username": "ghs",
+                "password": "${{ github.token  }}"
               }
             ]
           profiles: >
@@ -87,8 +87,8 @@ jobs:
               {
                 "id": "github",
                 "properties": {
-                  "github.username": "anis-app",
-                  "github.password": "${{ steps.app-token.outputs.token }}"
+                  "github.username": "ghs",
+                  "github.password": "${{ github.token }}"
                 }
               }
             ]
@@ -106,6 +106,7 @@ jobs:
           mvn --batch-mode  -s ./custom.xml release:perform
 
       - name: release-rollback
+        if: ${{ failure() }}
         run: |
           export GITHUB_TOKEN=${{ steps.app-token.outputs.token }}
           export GITHUB_ACTOR=anis-app
