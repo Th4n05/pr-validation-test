@@ -64,31 +64,6 @@ jobs:
                   esac
                   echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
                   echo "NEXT_SNAPSHOT=$NEXT_SNAPSHOT" >> $GITHUB_ENV
-      - name: prepare setting
-        uses: whelk-io/maven-settings-xml-action@v22
-        env:
-          GITHUB_USER: anis-app[bot]
-          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
-        with:
-          servers: >
-            [
-              {
-                "id": "github",
-                "username": "anis-app",
-                "password": "${{ steps.app-token.outputs.token }}"
-              }
-            ]
-          profiles: >
-            [
-              {
-                "id": "github",
-                "properties": {
-                  "github.username": "anis-app",
-                  "github.password": "${{ steps.app-token.outputs.token }}"
-                }
-              }
-            ]
-          output_file: ./custom.xml
 
       - name: dump
         run: cat $GITHUB_WORKSPACE/custom.xml
@@ -98,15 +73,16 @@ jobs:
           #git credential-cache exit
           #export CREDENTIALS=$(echo -n "anis-app:${{ steps.app-token.outputs.token }}" | base64)
           #git config --global "http.https://github.com/.extraheader=AUTHORIZATION: basic $CREDENTIALS"
+          git config -l
           git config credential.https://github.com/.helper "! f() { echo username=anis-app; echo password=${{ steps.app-token.outputs.token }}; };f"
           echo $GITHUB_USER  $GITHUB_TOKEN
           git config -l
-          mvn -s $GITHUB_WORKSPACE/custom.xml --batch-mode release:prepare
+          mvn --batch-mode release:prepare
 
       - name: release-perform
         if: ${{ success() }}
-        run: mvn -s $GITHUB_WORKSPACE/custom.xml --batch-mode release:perform
+        run: mvn --batch-mode release:perform
 
       - name: release-rollback
         if: ${{ failure() }}
-        run: mvn -s $GITHUB_WORKSPACE/custom.xml -B release:rollback
+        run: mvn -B release:rollback
