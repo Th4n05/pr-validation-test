@@ -4,27 +4,29 @@ on:
   pull_request:
     types:
       - closed
+    branches:
+      - master
 
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      packages: write
-
+    if: github.event.pull_request.merged == true
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin' # See 'Supported distributions' for available options
-          java-version: '21'
       - uses: actions/create-github-app-token@v1
         id: app-token
         with:
           app-id: ${{ secrets.APP_ID}}
           private-key: ${{ secrets.PRIVATE_KEY }}
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin' # See 'Supported distributions' for available options
+          java-version: '21'
+
 
       - name: Set up Maven
         uses: stCarolas/setup-maven@v4.5
@@ -48,39 +50,36 @@ jobs:
         id: calculate_new_version
         run: |
           CURRENT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-                  IFS=. read -r -a VERSION_PARTS <<< "$CURRENT_VERSION"
-                  MAJOR=${VERSION_PARTS[0]}
-                  MINOR=${VERSION_PARTS[1]}
-                  PATCH=${VERSION_PARTS[2]}
+          IFS=. read -r -a VERSION_PARTS <<< "$CURRENT_VERSION"
+          MAJOR=${VERSION_PARTS[0]}
+          MINOR=${VERSION_PARTS[1]}
+          PATCH=${VERSION_PARTS[2]}
 
-                  case "$VERSION_TYPE" in
-                    major)
-                      NEW_VERSION="$((MAJOR + 1)).0.0"
-                      NEXT_SNAPSHOT="$((MAJOR + 1)).0.1-SNAPSHOT"
-                      ;;
-                    minor)
-                      NEW_VERSION="$MAJOR.$((MINOR + 1)).0"
-                      NEXT_SNAPSHOT="$MAJOR.$((MINOR + 1)).1-SNAPSHOT"
-                      ;;
-                    patch)
-                      NEW_VERSION="$MAJOR.$MINOR.$((PATCH + 1))"
-                      NEXT_SNAPSHOT="$MAJOR.$MINOR.$((PATCH + 1))-SNAPSHOT"
-                      ;;
-                  esac
-                  echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
-                  echo "NEXT_SNAPSHOT=$NEXT_SNAPSHOT" >> $GITHUB_ENV
+          case "$VERSION_TYPE" in
+            major)
+              NEW_VERSION="$((MAJOR + 1)).0.0"
+              NEXT_SNAPSHOT="$((MAJOR + 1)).0.1-SNAPSHOT"
+              ;;
+            minor)
+              NEW_VERSION="$MAJOR.$((MINOR + 1)).0"
+              NEXT_SNAPSHOT="$MAJOR.$((MINOR + 1)).1-SNAPSHOT"
+              ;;
+            patch)
+              NEW_VERSION="$MAJOR.$MINOR.$((PATCH + 1))"
+              NEXT_SNAPSHOT="$MAJOR.$MINOR.$((PATCH + 1))-SNAPSHOT"
+              ;;
+          esac
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+          echo "NEXT_SNAPSHOT=$NEXT_SNAPSHOT" >> $GITHUB_ENV
       - name: prepare setting
         uses: whelk-io/maven-settings-xml-action@v22
-        env:
-          GITHUB_USER: anis-app[bot]
-          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         with:
           servers: >
             [
               {
                 "id": "github",
-                "username": "anis-app",
-                "password": "${{ steps.app-token.outputs.token }}"
+                "username": "ghs",
+                "password": "${{ github.token  }}"
               }
             ]
           profiles: >
@@ -88,25 +87,27 @@ jobs:
               {
                 "id": "github",
                 "properties": {
-                  "github.username": "anis-app",
-                  "github.password": "${{ steps.app-token.outputs.token }}"
+                  "github.username": "ghs",
+                  "github.password": "${{ github.token }}"
                 }
               }
             ]
           output_file: ./custom.xml
-
-      - name: dump
-        run: cat $GITHUB_WORKSPACE/custom.xml
-
       - name: release-prepare
         run: |
-          echo $GITHUB_USER  $GITHUB_TOKEN
-          mvn -s $GITHUB_WORKSPACE/custom.xml --batch-mode release:prepare
+          export GITHUB_TOKEN=${{ steps.app-token.outputs.token }}
+          export GITHUB_ACTOR=anis-app
+          mvn --batch-mode -s ./custom.xml release:prepare
 
       - name: release-perform
-        if: ${{ success() }}
-        run: mvn -s $GITHUB_WORKSPACE/custom.xml --batch-mode release:perform
+        run: |
+          export GITHUB_TOKEN=${{ steps.app-token.outputs.token }}
+          export GITHUB_ACTOR=anis-app
+          mvn --batch-mode  -s ./custom.xml release:perform
 
       - name: release-rollback
         if: ${{ failure() }}
-        run: mvn -s $GITHUB_WORKSPACE/custom.xml -B release:rollback
+        run: |
+          export GITHUB_TOKEN=${{ steps.app-token.outputs.token }}
+          export GITHUB_ACTOR=anis-app
+          mvn -B -s ./custom.xml release:rollback
