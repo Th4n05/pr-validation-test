@@ -4,11 +4,14 @@ on:
   pull_request:
     types:
       - closed
+    branches:
+      - master
 
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -32,10 +35,10 @@ jobs:
           git config --global user.email '121050231+anis-app[bot]@users.noreply.github.com'
 
       - name: Extract Version Type
-        id: extract_version_type
+        id: extract_version_typei
         run: |
           PR_TITLE="${{ github.event.pull_request.title }}"
-          if [[ "$PR_TITLE" =~ upgrade-version-type[[:space:]]*=[[:space:]]*(major|minor|patch) ]]; then
+          f [[ "$PR_TITLE" =~ upgrade-version-type[[:space:]]*=[[:space:]]*(major|minor|patch) ]]; then
             VERSION_TYPE=${BASH_REMATCH[1]}
             echo "VERSION_TYPE=$VERSION_TYPE" >> $GITHUB_ENV
           fi
@@ -43,27 +46,27 @@ jobs:
         id: calculate_new_version
         run: |
           CURRENT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-                  IFS=. read -r -a VERSION_PARTS <<< "$CURRENT_VERSION"
-                  MAJOR=${VERSION_PARTS[0]}
-                  MINOR=${VERSION_PARTS[1]}
-                  PATCH=${VERSION_PARTS[2]}
+          IFS=. read -r -a VERSION_PARTS <<< "$CURRENT_VERSION"
+          MAJOR=${VERSION_PARTS[0]}
+          MINOR=${VERSION_PARTS[1]}
+          PATCH=${VERSION_PARTS[2]}
 
-                  case "$VERSION_TYPE" in
-                    major)
-                      NEW_VERSION="$((MAJOR + 1)).0.0"
-                      NEXT_SNAPSHOT="$((MAJOR + 1)).0.1-SNAPSHOT"
-                      ;;
-                    minor)
-                      NEW_VERSION="$MAJOR.$((MINOR + 1)).0"
-                      NEXT_SNAPSHOT="$MAJOR.$((MINOR + 1)).1-SNAPSHOT"
-                      ;;
-                    patch)
-                      NEW_VERSION="$MAJOR.$MINOR.$((PATCH + 1))"
-                      NEXT_SNAPSHOT="$MAJOR.$MINOR.$((PATCH + 1))-SNAPSHOT"
-                      ;;
-                  esac
-                  echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
-                  echo "NEXT_SNAPSHOT=$NEXT_SNAPSHOT" >> $GITHUB_ENV
+          case "$VERSION_TYPE" in
+            major)
+              NEW_VERSION="$((MAJOR + 1)).0.0"
+              NEXT_SNAPSHOT="$((MAJOR + 1)).0.1-SNAPSHOT"
+              ;;
+            minor)
+              NEW_VERSION="$MAJOR.$((MINOR + 1)).0"
+              NEXT_SNAPSHOT="$MAJOR.$((MINOR + 1)).1-SNAPSHOT"
+              ;;
+            patch)
+              NEW_VERSION="$MAJOR.$MINOR.$((PATCH + 1))"
+              NEXT_SNAPSHOT="$MAJOR.$MINOR.$((PATCH + 1))-SNAPSHOT"
+              ;;
+          esac
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+          echo "NEXT_SNAPSHOT=$NEXT_SNAPSHOT" >> $GITHUB_ENV
 
       - name: release-prepare
         run: |
@@ -76,14 +79,11 @@ jobs:
           unset GITHUB_TOKEN
           export GITHUB_TOKEN=${{ steps.app-token.outputs.token }}
           export GITHUB_ACTOR=anis-app
-          echo $GITHUB_USER  $GITHUB_TOKEN
-          git config -l
+          echo $GITHUB_ACTOR  $GITHUB_TOKEN
           mvn --batch-mode release:prepare
 
       - name: release-perform
-        if: ${{ success() }}
         run: mvn --batch-mode release:perform
 
       - name: release-rollback
-        if: ${{ failure() }}
         run: mvn -B release:rollback
