@@ -97,13 +97,13 @@ jobs:
         run: |
           export GITHUB_TOKEN=${{ steps.app-token.outputs.token }}
           export GITHUB_ACTOR=anis-app
-          mvn --batch-mode -s ./custom.xml release:prepare
+          mvn --B -s ./custom.xml release:prepare -DreleaseVersion=${{ NEW_VERSION }} -DdevelopmentVersion=${{ NEXT_SNAPSHOT }}
 
       - name: release-perform
         run: |
           export GITHUB_TOKEN=${{ steps.app-token.outputs.token }}
           export GITHUB_ACTOR=anis-app
-          mvn --batch-mode  -s ./custom.xml release:perform
+          mvn --B  -s ./custom.xml release:perform
 
       - name: release-rollback
         if: ${{ failure() }}
